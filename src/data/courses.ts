@@ -60,7 +60,7 @@ const courses: Course[] = [
           'Constructors and object initialization',
           'Real-world object modeling',
         ],
-        notesUrl: '#',
+        notesUrl: 'https://drive.google.com/drive/u/1/folders/1wtRFFkZiA-i9lDpVHz6AmRJTkyO8M7JU',
       },
       {
         id: 'oops-2',
@@ -71,7 +71,7 @@ const courses: Course[] = [
           'Method overriding and the super keyword',
           'Benefits and limitations of inheritance',
         ],
-        notesUrl: '#',
+        notesUrl: 'https://drive.google.com/drive/u/1/folders/1wtRFFkZiA-i9lDpVHz6AmRJTkyO8M7JU',
       },
       {
         id: 'oops-3',
@@ -82,7 +82,7 @@ const courses: Course[] = [
           'Dynamic method dispatch',
           'Interfaces and polymorphic behavior',
         ],
-        notesUrl: '#',
+        notesUrl: 'https://drive.google.com/drive/u/1/folders/1wtRFFkZiA-i9lDpVHz6AmRJTkyO8M7JU',
       },
       {
         id: 'oops-4',
@@ -93,7 +93,7 @@ const courses: Course[] = [
           'Abstraction versus encapsulation',
           'Building loosely coupled applications',
         ],
-        notesUrl: '#',
+        notesUrl: 'https://drive.google.com/drive/u/1/folders/1wtRFFkZiA-i9lDpVHz6AmRJTkyO8M7JU',
       },
       {
         id: 'oops-5',
@@ -104,7 +104,7 @@ const courses: Course[] = [
           'Reading from and writing to files',
           'Resource management best practices',
         ],
-        notesUrl: '#',
+        notesUrl: 'https://drive.google.com/drive/u/1/folders/1wtRFFkZiA-i9lDpVHz6AmRJTkyO8M7JU',
       },
     ],
     programs: [
