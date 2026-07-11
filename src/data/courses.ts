@@ -34,6 +34,7 @@ export interface Course {
   color: 'blue' | 'indigo' | 'teal'
   lessons: Lesson[]
   programs: Program[]
+  driveFolderId: string
   categories: QuestionCategory[]
 }
 
@@ -141,6 +142,7 @@ class Rectangle extends Shape {
 }`,
       },
     ],
+    driveFolderId: 'REPLACE_WITH_OOPS_FOLDER_ID',
     categories: [
       {
         id: 'ds-cat-1',
@@ -277,6 +279,7 @@ GROUP BY department_id
 HAVING COUNT(*) > 1;`,
       },
     ],
+    driveFolderId: 'REPLACE_WITH_DBMS_FOLDER_ID',
     categories: [
       {
         id: 'dbms-cat-1',
@@ -412,6 +415,7 @@ INSERT INTO salary_audit(employee_id, old_salary, new_salary)
 VALUES (OLD.id, OLD.salary, NEW.salary);`,
       },
     ],
+    driveFolderId: 'REPLACE_WITH_DBMS_LAB_FOLDER_ID',
     categories: [
       {
         id: 'lab-cat-1',

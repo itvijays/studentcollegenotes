@@ -1,6 +1,8 @@
 import { createRootRoute, HeadContent, Scripts, createFileRoute, lazyRouteComponent, notFound, createRouter } from "@tanstack/react-router";
 import { jsxs, jsx } from "react/jsx-runtime";
-const Route$2 = createRootRoute({
+import { Readable } from "node:stream";
+import { google } from "googleapis";
+const Route$4 = createRootRoute({
   head: () => ({
     meta: [
       {
@@ -45,8 +47,8 @@ function RootDocument({ children }) {
     ] })
   ] });
 }
-const $$splitComponentImporter$1 = () => import("./index-CLIJ0X7d.js");
-const Route$1 = createFileRoute("/")({
+const $$splitComponentImporter$1 = () => import("./index-BtrDKTK2.js");
+const Route$3 = createFileRoute("/")({
   component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
 const academicYear = "2026 - 2027";
@@ -151,6 +153,7 @@ class Rectangle extends Shape {
 }`
       }
     ],
+    driveFolderId: "REPLACE_WITH_OOPS_FOLDER_ID",
     categories: [
       {
         id: "ds-cat-1",
@@ -281,6 +284,7 @@ GROUP BY department_id
 HAVING COUNT(*) > 1;`
       }
     ],
+    driveFolderId: "REPLACE_WITH_DBMS_FOLDER_ID",
     categories: [
       {
         id: "dbms-cat-1",
@@ -410,6 +414,7 @@ INSERT INTO salary_audit(employee_id, old_salary, new_salary)
 VALUES (OLD.id, OLD.salary, NEW.salary);`
       }
     ],
+    driveFolderId: "REPLACE_WITH_DBMS_LAB_FOLDER_ID",
     categories: [
       {
         id: "lab-cat-1",
@@ -445,8 +450,8 @@ VALUES (OLD.id, OLD.salary, NEW.salary);`
 function getCourseById(id) {
   return courses.find((c) => c.id === id);
 }
-const $$splitComponentImporter = () => import("./_courseId-DwBs40JY.js");
-const Route = createFileRoute("/courses/$courseId")({
+const $$splitComponentImporter = () => import("./_courseId-0DQrfg-b.js");
+const Route$2 = createFileRoute("/courses/$courseId")({
   component: lazyRouteComponent($$splitComponentImporter, "component"),
   loader: async ({
     params
@@ -456,21 +461,200 @@ const Route = createFileRoute("/courses/$courseId")({
     return course;
   }
 });
-const IndexRoute = Route$1.update({
+const DRIVE_ROOT_FOLDER_ID = "1_hEs4quoqdEsoR0cAfdTqf0RRaOz-gpy";
+const FOLDER_MIME_TYPE = "application/vnd.google-apps.folder";
+const GOOGLE_MIME_PREFIX = "application/vnd.google-apps.";
+class DriveConfigurationError extends Error {
+}
+class DriveAccessError extends Error {
+}
+function getDriveClient() {
+  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, "\n");
+  if (!email || !privateKey) {
+    throw new DriveConfigurationError("Google Drive is not configured yet.");
+  }
+  const auth = new google.auth.JWT({
+    email,
+    key: privateKey,
+    scopes: ["https://www.googleapis.com/auth/drive.readonly"]
+  });
+  return google.drive({ version: "v3", auth });
+}
+function getCourseFolderId(courseId) {
+  const course = courses.find((item) => item.id === courseId);
+  if (!course) throw new DriveAccessError("Course not found.");
+  if (course.driveFolderId.startsWith("REPLACE_WITH_")) {
+    throw new DriveConfigurationError("This course folder has not been connected yet.");
+  }
+  return course.driveFolderId;
+}
+async function getFile(drive, fileId) {
+  const response = await drive.files.get({
+    fileId,
+    fields: "id,name,mimeType,parents,size,modifiedTime,webViewLink",
+    supportsAllDrives: true
+  });
+  return response.data;
+}
+async function assertDescendant(drive, itemId, allowedFolderId) {
+  if (itemId === allowedFolderId) return;
+  const visited = /* @__PURE__ */ new Set();
+  let frontier = [itemId];
+  while (frontier.length) {
+    const currentId = frontier.shift();
+    if (visited.has(currentId)) continue;
+    visited.add(currentId);
+    const item = await getFile(drive, currentId);
+    const parents = item.parents ?? [];
+    if (parents.includes(allowedFolderId)) return;
+    frontier.push(...parents.filter((parent) => parent !== DRIVE_ROOT_FOLDER_ID));
+  }
+  throw new DriveAccessError("The requested item is outside this course folder.");
+}
+async function listDriveFolder(courseId, requestedFolderId) {
+  const drive = getDriveClient();
+  const courseFolderId = getCourseFolderId(courseId);
+  const folderId = requestedFolderId || courseFolderId;
+  await assertDescendant(drive, folderId, courseFolderId);
+  const items = [];
+  let pageToken;
+  do {
+    const response = await drive.files.list({
+      q: `'${folderId.replace(/'/g, "\\'")}' in parents and trashed = false`,
+      fields: "nextPageToken,files(id,name,mimeType,size,modifiedTime,webViewLink)",
+      orderBy: "folder,name_natural",
+      pageSize: 100,
+      pageToken,
+      supportsAllDrives: true,
+      includeItemsFromAllDrives: true
+    });
+    for (const file of response.data.files ?? []) {
+      if (!file.id || !file.name || !file.mimeType) continue;
+      items.push({
+        id: file.id,
+        name: file.name,
+        mimeType: file.mimeType,
+        isFolder: file.mimeType === FOLDER_MIME_TYPE,
+        isGoogleFile: file.mimeType.startsWith(GOOGLE_MIME_PREFIX) && file.mimeType !== FOLDER_MIME_TYPE,
+        size: file.size ? Number(file.size) : null,
+        modifiedTime: file.modifiedTime ?? null,
+        webViewLink: file.webViewLink ?? null
+      });
+    }
+    pageToken = response.data.nextPageToken ?? void 0;
+  } while (pageToken);
+  items.sort((a, b) => Number(b.isFolder) - Number(a.isFolder) || a.name.localeCompare(b.name));
+  return { folderId, courseFolderId, items };
+}
+async function downloadDriveFile(courseId, fileId) {
+  const drive = getDriveClient();
+  const courseFolderId = getCourseFolderId(courseId);
+  await assertDescendant(drive, fileId, courseFolderId);
+  const metadata = await getFile(drive, fileId);
+  if (metadata.mimeType?.startsWith(GOOGLE_MIME_PREFIX)) {
+    throw new DriveAccessError("Google files must be opened in Drive preview.");
+  }
+  const response = await drive.files.get(
+    { fileId, alt: "media", supportsAllDrives: true },
+    { responseType: "stream" }
+  );
+  return {
+    body: Readable.toWeb(response.data),
+    name: metadata.name ?? "download",
+    mimeType: metadata.mimeType ?? "application/octet-stream",
+    size: metadata.size ?? null
+  };
+}
+const Route$1 = createFileRoute("/api/drive/files")({
+  server: {
+    handlers: {
+      GET: async ({ request }) => {
+        const url = new URL(request.url);
+        const courseId = url.searchParams.get("courseId")?.trim();
+        const folderId = url.searchParams.get("folderId")?.trim() || void 0;
+        if (!courseId) {
+          return Response.json({ error: "A course is required." }, { status: 400 });
+        }
+        try {
+          return Response.json(await listDriveFolder(courseId, folderId), {
+            headers: { "Cache-Control": "private, max-age=60" }
+          });
+        } catch (error) {
+          if (error instanceof DriveConfigurationError) {
+            return Response.json({ error: error.message, unconfigured: true }, { status: 503 });
+          }
+          if (error instanceof DriveAccessError) {
+            return Response.json({ error: error.message }, { status: 403 });
+          }
+          return Response.json(
+            { error: "Drive files could not be loaded. Check folder sharing and try again." },
+            { status: 502 }
+          );
+        }
+      }
+    }
+  }
+});
+function safeFilename(name) {
+  return name.replace(/[\r\n"\\/]/g, "_");
+}
+const Route = createFileRoute("/api/drive/download/$fileId")({
+  server: {
+    handlers: {
+      GET: async ({ request, params }) => {
+        const courseId = new URL(request.url).searchParams.get("courseId")?.trim();
+        if (!courseId) return new Response("A course is required.", { status: 400 });
+        try {
+          const file = await downloadDriveFile(courseId, params.fileId);
+          const headers = new Headers({
+            "Content-Type": file.mimeType,
+            "Content-Disposition": `attachment; filename="${safeFilename(file.name)}"; filename*=UTF-8''${encodeURIComponent(file.name)}`,
+            "Cache-Control": "private, no-store",
+            "X-Content-Type-Options": "nosniff"
+          });
+          if (file.size) headers.set("Content-Length", file.size);
+          return new Response(file.body, { headers });
+        } catch (error) {
+          if (error instanceof DriveConfigurationError) {
+            return new Response(error.message, { status: 503 });
+          }
+          if (error instanceof DriveAccessError) {
+            return new Response(error.message, { status: 403 });
+          }
+          return new Response("The file could not be downloaded.", { status: 502 });
+        }
+      }
+    }
+  }
+});
+const IndexRoute = Route$3.update({
   id: "/",
   path: "/",
-  getParentRoute: () => Route$2
+  getParentRoute: () => Route$4
 });
-const CoursesCourseIdRoute = Route.update({
+const CoursesCourseIdRoute = Route$2.update({
   id: "/courses/$courseId",
   path: "/courses/$courseId",
-  getParentRoute: () => Route$2
+  getParentRoute: () => Route$4
+});
+const ApiDriveFilesRoute = Route$1.update({
+  id: "/api/drive/files",
+  path: "/api/drive/files",
+  getParentRoute: () => Route$4
+});
+const ApiDriveDownloadFileIdRoute = Route.update({
+  id: "/api/drive/download/$fileId",
+  path: "/api/drive/download/$fileId",
+  getParentRoute: () => Route$4
 });
 const rootRouteChildren = {
   IndexRoute,
-  CoursesCourseIdRoute
+  CoursesCourseIdRoute,
+  ApiDriveFilesRoute,
+  ApiDriveDownloadFileIdRoute
 };
-const routeTree = Route$2._addFileChildren(rootRouteChildren)._addFileTypes();
+const routeTree = Route$4._addFileChildren(rootRouteChildren)._addFileTypes();
 const getRouter = () => {
   const router2 = createRouter({
     routeTree,
@@ -484,7 +668,7 @@ const router = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   getRouter
 }, Symbol.toStringTag, { value: "Module" }));
 export {
-  Route as R,
+  Route$2 as R,
   academicYear as a,
   courses as b,
   collegeName as c,

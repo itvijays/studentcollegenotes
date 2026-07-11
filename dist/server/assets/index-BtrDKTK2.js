@@ -1,7 +1,9 @@
 import { jsxs, jsx } from "react/jsx-runtime";
 import { Link } from "@tanstack/react-router";
 import { GraduationCap, FlaskConical, BookOpen, ArrowRight } from "lucide-react";
-import { a as academicYear, c as collegeName, b as courses } from "./router-D-ryxS71.js";
+import { a as academicYear, c as collegeName, b as courses } from "./router-DJGNLVU_.js";
+import "node:stream";
+import "googleapis";
 const colorStyles = {
   blue: {
     icon: "text-blue-600 bg-blue-50",

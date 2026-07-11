@@ -9,7 +9,9 @@ import {
   Eye,
   EyeOff,
   FileQuestion,
+  FolderOpen,
 } from 'lucide-react'
+import { DriveFileBrowser } from '@/components/drive-file-browser'
 import { getCourseById } from '@/data/courses'
 
 export const Route = createFileRoute('/courses/$courseId')({
@@ -21,7 +23,7 @@ export const Route = createFileRoute('/courses/$courseId')({
   },
 })
 
-type Tab = 'lessons' | 'programs' | 'questions'
+type Tab = 'lessons' | 'programs' | 'questions' | 'files'
 
 function CourseDetailPage() {
   const course = Route.useLoaderData()
@@ -49,7 +51,7 @@ function CourseDetailPage() {
           <p className="text-sm text-slate-500">{course.yearSemester}</p>
 
           <div
-            className="mt-4 grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1"
+            className="mt-4 grid grid-cols-4 gap-1 rounded-xl bg-slate-100 p-1"
             role="tablist"
             aria-label={`${course.name} resources`}
           >
@@ -93,7 +95,21 @@ function CourseDetailPage() {
               }`}
             >
               <FileQuestion className="h-4 w-4" />
-              <span>Question Bank</span>
+              <span>Questions</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === 'files'}
+              onClick={() => setTab('files')}
+              className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2.5 text-xs font-semibold transition-colors sm:flex-row sm:gap-2 sm:text-sm ${
+                tab === 'files'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <FolderOpen className="h-4 w-4" />
+              <span>Files</span>
             </button>
           </div>
         </div>
@@ -174,6 +190,13 @@ function CourseDetailPage() {
               </article>
             ))}
           </div>
+        )}
+
+        {tab === 'files' && (
+          <DriveFileBrowser
+            courseId={course.id}
+            folderConfigured={!course.driveFolderId.startsWith('REPLACE_WITH_')}
+          />
         )}
 
         {tab === 'questions' && (
