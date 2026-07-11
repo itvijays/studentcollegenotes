@@ -14,11 +14,11 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: "Priya's Study Hub",
+        title: "Student's Study Hub",
       },
       {
         name: 'description',
-        content: 'Lessons, notes, and question banks for Data Structures, DBMS, and DBMS Lab.',
+        content: 'Lessons, notes, and question banks for OOPS, DBMS, and DBMS Lab.',
       },
     ],
     links: [

@@ -1,0 +1,4 @@
+const tsrStartManifest = () => ({ routes: { __root__: { filePath: "/vercel/share/v0-project/src/routes/__root.tsx", children: ["/", "/courses/$courseId", "/api/drive/files", "/api/drive/download/$fileId"], assets: [{ tag: "link", attrs: { rel: "stylesheet", href: "/assets/index-xkKg6TsA.css", type: "text/css" } }], preloads: ["/assets/index-CdWAaith.js"] }, "/": { filePath: "/vercel/share/v0-project/src/routes/index.tsx", children: void 0, assets: [], preloads: ["/assets/index-BkIv5b4j.js", "/assets/book-open-B0xR0txf.js"] }, "/courses/$courseId": { filePath: "/vercel/share/v0-project/src/routes/courses/$courseId.tsx", children: void 0, assets: [], preloads: ["/assets/_courseId-CrTHyBav.js", "/assets/book-open-B0xR0txf.js"] } }, clientEntry: "/assets/index-CdWAaith.js" });
+export {
+  tsrStartManifest
+};
