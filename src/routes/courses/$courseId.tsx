@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BookOpen,
   ChevronDown,
+  Code2,
   Download,
   Eye,
   EyeOff,
@@ -20,7 +21,7 @@ export const Route = createFileRoute('/courses/$courseId')({
   },
 })
 
-type Tab = 'lessons' | 'questions'
+type Tab = 'lessons' | 'programs' | 'questions'
 
 function CourseDetailPage() {
   const course = Route.useLoaderData()
@@ -37,7 +38,7 @@ function CourseDetailPage() {
         <div className="mx-auto max-w-3xl px-5 py-4">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-blue-600"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Home
@@ -47,35 +48,59 @@ function CourseDetailPage() {
           </h1>
           <p className="text-sm text-slate-500">{course.yearSemester}</p>
 
-          <div className="mt-4 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+          <div
+            className="mt-4 grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1"
+            role="tablist"
+            aria-label={`${course.name} resources`}
+          >
             <button
+              type="button"
+              role="tab"
+              aria-selected={tab === 'lessons'}
               onClick={() => setTab('lessons')}
-              className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-colors ${
+              className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2.5 text-xs font-semibold transition-colors sm:flex-row sm:gap-2 sm:text-sm ${
                 tab === 'lessons'
                   ? 'bg-white text-blue-600 shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               <BookOpen className="h-4 w-4" />
-              Lessons & Notes
+              <span>Lessons & Notes</span>
             </button>
             <button
+              type="button"
+              role="tab"
+              aria-selected={tab === 'programs'}
+              onClick={() => setTab('programs')}
+              className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2.5 text-xs font-semibold transition-colors sm:flex-row sm:gap-2 sm:text-sm ${
+                tab === 'programs'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <Code2 className="h-4 w-4" />
+              <span>Programs</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === 'questions'}
               onClick={() => setTab('questions')}
-              className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-colors ${
+              className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2.5 text-xs font-semibold transition-colors sm:flex-row sm:gap-2 sm:text-sm ${
                 tab === 'questions'
                   ? 'bg-white text-blue-600 shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               <FileQuestion className="h-4 w-4" />
-              Question Bank
+              <span>Question Bank</span>
             </button>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-3xl px-5 py-6">
-        {tab === 'lessons' ? (
+        {tab === 'lessons' && (
           <div className="flex flex-col gap-3">
             {course.lessons.map((lesson) => {
               const isOpen = openLesson === lesson.id
@@ -85,6 +110,8 @@ function CourseDetailPage() {
                   className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
                 >
                   <button
+                    type="button"
+                    aria-expanded={isOpen}
                     onClick={() => setOpenLesson(isOpen ? null : lesson.id)}
                     className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
                   >
@@ -97,9 +124,9 @@ function CourseDetailPage() {
                   </button>
                   {isOpen && (
                     <div className="border-t border-slate-100 px-5 py-4">
-                      <ul className="space-y-2">
-                        {lesson.concepts.map((concept, i) => (
-                          <li key={i} className="flex gap-2 text-sm leading-relaxed text-slate-600">
+                      <ul className="flex flex-col gap-2">
+                        {lesson.concepts.map((concept) => (
+                          <li key={concept} className="flex gap-2 text-sm leading-relaxed text-slate-600">
                             <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500" />
                             {concept}
                           </li>
@@ -118,7 +145,38 @@ function CourseDetailPage() {
               )
             })}
           </div>
-        ) : (
+        )}
+
+        {tab === 'programs' && (
+          <div className="flex flex-col gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Practice Programs</h2>
+              <p className="mt-1 text-sm leading-relaxed text-slate-500">
+                Starter examples for practice. More programs can be added here later.
+              </p>
+            </div>
+            {course.programs.map((program) => (
+              <article
+                key={program.id}
+                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+              >
+                <div className="p-5">
+                  <h3 className="font-bold text-slate-900">{program.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                    {program.description}
+                  </p>
+                </div>
+                <div className="border-t border-slate-200 bg-slate-900 p-4">
+                  <pre className="overflow-x-auto text-sm leading-relaxed text-slate-100">
+                    <code>{program.code}</code>
+                  </pre>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {tab === 'questions' && (
           <div className="flex flex-col gap-6">
             {course.categories.map((category) => (
               <div key={category.id}>
@@ -126,18 +184,18 @@ function CourseDetailPage() {
                   {category.title}
                 </h2>
                 <div className="flex flex-col gap-3">
-                  {category.questions.map((q) => {
-                    const isRevealed = !!revealed[q.id]
+                  {category.questions.map((question) => {
+                    const isRevealed = !!revealed[question.id]
                     return (
                       <div
-                        key={q.id}
+                        key={question.id}
                         className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <p className="font-medium text-slate-900 leading-relaxed">
-                            {q.question}
+                          <p className="font-medium leading-relaxed text-slate-900">
+                            {question.question}
                           </p>
-                          {q.important && (
+                          {question.important && (
                             <span className="flex-shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
                               Important
                             </span>
@@ -145,7 +203,9 @@ function CourseDetailPage() {
                         </div>
 
                         <button
-                          onClick={() => toggleAnswer(q.id)}
+                          type="button"
+                          aria-expanded={isRevealed}
+                          onClick={() => toggleAnswer(question.id)}
                           className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-200"
                         >
                           {isRevealed ? (
@@ -163,7 +223,7 @@ function CourseDetailPage() {
 
                         {isRevealed && (
                           <p className="mt-3 rounded-xl bg-slate-50 p-3 text-sm leading-relaxed text-slate-600">
-                            {q.answer}
+                            {question.answer}
                           </p>
                         )}
                       </div>

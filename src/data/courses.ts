@@ -5,6 +5,13 @@ export interface Lesson {
   notesUrl: string
 }
 
+export interface Program {
+  id: string
+  title: string
+  description: string
+  code: string
+}
+
 export interface Question {
   id: string
   question: string
@@ -26,6 +33,7 @@ export interface Course {
   description: string
   color: 'blue' | 'indigo' | 'teal'
   lessons: Lesson[]
+  programs: Program[]
   categories: QuestionCategory[]
 }
 
@@ -39,41 +47,98 @@ const courses: Course[] = [
     type: 'theory',
     yearSemester: '2nd Year · Semester 3',
     description:
-      'Core concepts of arrays, linked lists, trees, and graphs with algorithmic problem solving.',
+      'Object-oriented programming with classes, inheritance, polymorphism, abstraction, and practical examples.',
     color: 'blue',
     lessons: [
       {
-        id: 'ds-1',
-        title: 'Lesson 1: Arrays & Linked Lists',
+        id: 'oops-1',
+        title: 'Lesson 1: Classes & Objects',
         concepts: [
-          'Static vs dynamic arrays and memory layout',
-          'Singly, doubly, and circular linked lists',
-          'Insertion, deletion, and traversal operations',
-          'Time complexity comparison: array vs linked list',
+          'Defining classes, objects, attributes, and methods',
+          'Access modifiers and encapsulation',
+          'Constructors and object initialization',
+          'Real-world object modeling',
         ],
         notesUrl: '#',
       },
       {
-        id: 'ds-2',
-        title: 'Lesson 2: Stacks & Queues',
+        id: 'oops-2',
+        title: 'Lesson 2: Inheritance',
         concepts: [
-          'LIFO and FIFO principles',
-          'Array-based and linked-list-based implementations',
-          'Applications: expression evaluation, recursion, scheduling',
-          'Circular queues and deques',
+          'Base and derived classes',
+          'Single, multilevel, and hierarchical inheritance',
+          'Method overriding and the super keyword',
+          'Benefits and limitations of inheritance',
         ],
         notesUrl: '#',
       },
       {
-        id: 'ds-3',
-        title: 'Lesson 3: Trees & Binary Search Trees',
+        id: 'oops-3',
+        title: 'Lesson 3: Polymorphism',
         concepts: [
-          'Tree terminology: root, leaf, height, depth',
-          'Binary tree traversals: inorder, preorder, postorder',
-          'BST insertion, deletion, and search',
-          'Balanced trees: AVL rotation basics',
+          'Compile-time and runtime polymorphism',
+          'Method overloading and method overriding',
+          'Dynamic method dispatch',
+          'Interfaces and polymorphic behavior',
         ],
         notesUrl: '#',
+      },
+      {
+        id: 'oops-4',
+        title: 'Lesson 4: Abstraction & Interfaces',
+        concepts: [
+          'Abstract classes and abstract methods',
+          'Designing and implementing interfaces',
+          'Abstraction versus encapsulation',
+          'Building loosely coupled applications',
+        ],
+        notesUrl: '#',
+      },
+      {
+        id: 'oops-5',
+        title: 'Lesson 5: Exception Handling & File I/O',
+        concepts: [
+          'Handling exceptions with try, catch, and finally',
+          'Creating custom exceptions',
+          'Reading from and writing to files',
+          'Resource management best practices',
+        ],
+        notesUrl: '#',
+      },
+    ],
+    programs: [
+      {
+        id: 'oops-program-1',
+        title: 'Student Class',
+        description: 'Create a class with a constructor and a method to display student details.',
+        code: `class Student {
+  constructor(name, rollNumber) {
+    this.name = name
+    this.rollNumber = rollNumber
+  }
+
+  display() {
+    return \`${'${this.rollNumber}'} - ${'${this.name}'}\`
+  }
+}`,
+      },
+      {
+        id: 'oops-program-2',
+        title: 'Shape Polymorphism',
+        description: 'Override a common area method in different shape classes.',
+        code: `class Shape {
+  area() { return 0 }
+}
+
+class Rectangle extends Shape {
+  constructor(width, height) {
+    super()
+    this.width = width
+    this.height = height
+  }
+
+  area() { return this.width * this.height }
+}`,
       },
     ],
     categories: [
@@ -166,6 +231,51 @@ const courses: Course[] = [
         ],
         notesUrl: '#',
       },
+      {
+        id: 'dbms-4',
+        title: 'Lesson 4: Indexing & Query Optimization',
+        concepts: [
+          'Primary, secondary, clustered, and non-clustered indexes',
+          'B+ tree and hash indexing',
+          'Query execution plans and cost estimation',
+          'Improving queries with appropriate indexes',
+        ],
+        notesUrl: '#',
+      },
+      {
+        id: 'dbms-5',
+        title: 'Lesson 5: Security & Recovery',
+        concepts: [
+          'User roles, privileges, and access control',
+          'Database backup strategies',
+          'Log-based recovery and checkpoints',
+          'Protecting data from common security threats',
+        ],
+        notesUrl: '#',
+      },
+    ],
+    programs: [
+      {
+        id: 'dbms-program-1',
+        title: 'Student Enrollment Query',
+        description: 'Join students and enrollments to list each student with their registered course.',
+        code: `SELECT s.name, e.course_name
+FROM students AS s
+INNER JOIN enrollments AS e
+  ON s.id = e.student_id
+ORDER BY s.name;`,
+      },
+      {
+        id: 'dbms-program-2',
+        title: 'Department Summary',
+        description: 'Group employees by department and calculate average salaries.',
+        code: `SELECT department_id,
+       COUNT(*) AS employee_count,
+       AVG(salary) AS average_salary
+FROM employees
+GROUP BY department_id
+HAVING COUNT(*) > 1;`,
+      },
     ],
     categories: [
       {
@@ -256,6 +366,50 @@ const courses: Course[] = [
           'Sample lab task: trigger to log salary updates',
         ],
         notesUrl: '#',
+      },
+      {
+        id: 'lab-4',
+        title: 'Experiment 4: Views & Cursors',
+        concepts: [
+          'Creating simple and complex views',
+          'Updating data through views',
+          'Implicit and explicit cursors',
+          'Sample lab task: process department records with a cursor',
+        ],
+        notesUrl: '#',
+      },
+      {
+        id: 'lab-5',
+        title: 'Experiment 5: Transactions & Connectivity',
+        concepts: [
+          'Using COMMIT, ROLLBACK, and SAVEPOINT',
+          'Testing transaction isolation behavior',
+          'Connecting an application to a database',
+          'Sample lab task: build a transactional student registration flow',
+        ],
+        notesUrl: '#',
+      },
+    ],
+    programs: [
+      {
+        id: 'lab-program-1',
+        title: 'Create a Student Table',
+        description: 'Create a table with primary-key, required-field, and score constraints.',
+        code: `CREATE TABLE students (
+  id INT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  score DECIMAL(5, 2) CHECK (score BETWEEN 0 AND 100)
+);`,
+      },
+      {
+        id: 'lab-program-2',
+        title: 'Salary Audit Trigger',
+        description: 'Record old and new salary values whenever an employee salary changes.',
+        code: `CREATE TRIGGER log_salary_update
+AFTER UPDATE OF salary ON employees
+FOR EACH ROW
+INSERT INTO salary_audit(employee_id, old_salary, new_salary)
+VALUES (OLD.id, OLD.salary, NEW.salary);`,
       },
     ],
     categories: [
