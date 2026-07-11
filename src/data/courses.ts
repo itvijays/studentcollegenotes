@@ -35,7 +35,7 @@ export const collegeName = "Student's Study Hub"
 const courses: Course[] = [
   {
     id: 'data-structures',
-    name: 'Data Structures',
+    name: 'OOPS',
     type: 'theory',
     yearSemester: '2nd Year · Semester 3',
     description:

@@ -18,7 +18,7 @@ export const Route = createRootRoute({
       },
       {
         name: 'description',
-        content: 'Lessons, notes, and question banks for Data Structures, DBMS, and DBMS Lab.',
+        content: 'Lessons, notes, and question banks for OOPS, DBMS, and DBMS Lab.',
       },
     ],
     links: [
