@@ -30,7 +30,7 @@ export interface Course {
 }
 
 export const academicYear = '2026 - 2027'
-export const collegeName = "Priya's Study Hub"
+export const collegeName = "Students Study Hub"
 
 const courses: Course[] = [
   {
