@@ -1,18 +1,79 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import {
   ArrowLeft,
   BookOpen,
+  Check,
   ChevronDown,
   Code2,
+  Copy,
   Download,
   Eye,
   EyeOff,
   FileQuestion,
   FolderOpen,
+  Loader2,
 } from 'lucide-react'
 import { DriveFileBrowser } from '@/components/drive-file-browser'
 import { getCourseById } from '@/data/courses'
+
+function DriveFileCode({ fileId, title }: { fileId: string; title: string }) {
+  const [content, setContent] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    setLoading(true)
+    fetch(`/api/drive/file-text/${fileId}`)
+      .then((res) => {
+        if (!res.ok) return res.text().then((t) => Promise.reject(t))
+        return res.text()
+      })
+      .then((text) => { setContent(text); setLoading(false) })
+      .catch((err) => { setError(typeof err === 'string' ? err : 'Failed to load programs.'); setLoading(false) })
+  }, [fileId])
+
+  const handleCopy = () => {
+    if (!content) return
+    navigator.clipboard.writeText(content).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-center justify-between gap-3 px-5 py-4">
+        <h3 className="font-bold text-slate-900">{title}</h3>
+        {content && (
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-200"
+          >
+            {copied ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
+        )}
+      </div>
+      <div className="border-t border-slate-200 bg-slate-900 p-4">
+        {loading && (
+          <div className="flex items-center gap-2 text-slate-400">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm">Loading programs…</span>
+          </div>
+        )}
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        {content && (
+          <pre className="overflow-x-auto text-sm leading-relaxed text-slate-100 whitespace-pre-wrap">
+            <code>{content}</code>
+          </pre>
+        )}
+      </div>
+    </article>
+  )
+}
 
 export const Route = createFileRoute('/courses/$courseId')({
   component: CourseDetailPage,
@@ -173,6 +234,15 @@ function CourseDetailPage() {
                 Starter examples for practice. More programs can be added here later.
               </p>
             </div>
+            {course.lessons
+              .filter((lesson) => lesson.programsFileId)
+              .map((lesson) => (
+                <DriveFileCode
+                  key={lesson.id}
+                  fileId={lesson.programsFileId!}
+                  title={lesson.title + ' — Programs'}
+                />
+              ))}
             {course.programs.map((program) => (
               <article
                 key={program.id}

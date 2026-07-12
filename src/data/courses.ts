@@ -3,6 +3,7 @@ export interface Lesson {
   title: string
   concepts: string[]
   notesUrl: string
+  programsFileId?: string
 }
 
 export interface Program {
@@ -60,7 +61,8 @@ const courses: Course[] = [
           'Constructors and object initialization',
           'Real-world object modeling',
         ],
-        notesUrl: 'https://drive.google.com/drive/u/1/folders/1wtRFFkZiA-i9lDpVHz6AmRJTkyO8M7JU',
+        notesUrl: 'https://drive.google.com/uc?export=download&id=1hRWveQOVDkx0kqh5l0rbHbmsPRkDDIcK',
+        programsFileId: '1qT2m9-J1jIo4BPdAX6LgvpjgSl1H2m7v',
       },
       {
         id: 'oops-2',

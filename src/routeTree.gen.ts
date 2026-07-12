@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CoursesCourseIdRouteImport } from './routes/courses/$courseId'
 import { Route as ApiDriveFilesRouteImport } from './routes/api/drive/files'
+import { Route as ApiDriveFileTextFileIdRouteImport } from './routes/api/drive/file-text.$fileId'
 import { Route as ApiDriveDownloadFileIdRouteImport } from './routes/api/drive/download.$fileId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const ApiDriveFilesRoute = ApiDriveFilesRouteImport.update({
   path: '/api/drive/files',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDriveFileTextFileIdRoute = ApiDriveFileTextFileIdRouteImport.update({
+  id: '/api/drive/file-text/$fileId',
+  path: '/api/drive/file-text/$fileId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDriveDownloadFileIdRoute = ApiDriveDownloadFileIdRouteImport.update({
   id: '/api/drive/download/$fileId',
   path: '/api/drive/download/$fileId',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/api/drive/files': typeof ApiDriveFilesRoute
   '/api/drive/download/$fileId': typeof ApiDriveDownloadFileIdRoute
+  '/api/drive/file-text/$fileId': typeof ApiDriveFileTextFileIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/api/drive/files': typeof ApiDriveFilesRoute
   '/api/drive/download/$fileId': typeof ApiDriveDownloadFileIdRoute
+  '/api/drive/file-text/$fileId': typeof ApiDriveFileTextFileIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,6 +61,7 @@ export interface FileRoutesById {
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/api/drive/files': typeof ApiDriveFilesRoute
   '/api/drive/download/$fileId': typeof ApiDriveDownloadFileIdRoute
+  '/api/drive/file-text/$fileId': typeof ApiDriveFileTextFileIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -61,18 +70,21 @@ export interface FileRouteTypes {
     | '/courses/$courseId'
     | '/api/drive/files'
     | '/api/drive/download/$fileId'
+    | '/api/drive/file-text/$fileId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/courses/$courseId'
     | '/api/drive/files'
     | '/api/drive/download/$fileId'
+    | '/api/drive/file-text/$fileId'
   id:
     | '__root__'
     | '/'
     | '/courses/$courseId'
     | '/api/drive/files'
     | '/api/drive/download/$fileId'
+    | '/api/drive/file-text/$fileId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,6 +92,7 @@ export interface RootRouteChildren {
   CoursesCourseIdRoute: typeof CoursesCourseIdRoute
   ApiDriveFilesRoute: typeof ApiDriveFilesRoute
   ApiDriveDownloadFileIdRoute: typeof ApiDriveDownloadFileIdRoute
+  ApiDriveFileTextFileIdRoute: typeof ApiDriveFileTextFileIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -105,6 +118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDriveFilesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/drive/file-text/$fileId': {
+      id: '/api/drive/file-text/$fileId'
+      path: '/api/drive/file-text/$fileId'
+      fullPath: '/api/drive/file-text/$fileId'
+      preLoaderRoute: typeof ApiDriveFileTextFileIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/drive/download/$fileId': {
       id: '/api/drive/download/$fileId'
       path: '/api/drive/download/$fileId'
@@ -120,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoursesCourseIdRoute: CoursesCourseIdRoute,
   ApiDriveFilesRoute: ApiDriveFilesRoute,
   ApiDriveDownloadFileIdRoute: ApiDriveDownloadFileIdRoute,
+  ApiDriveFileTextFileIdRoute: ApiDriveFileTextFileIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

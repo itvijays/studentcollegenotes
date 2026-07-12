@@ -121,6 +121,15 @@ export async function listDriveFolder(courseId: string, requestedFolderId?: stri
   return { folderId, courseFolderId, items }
 }
 
+export async function fetchDriveFileText(fileId: string): Promise<string> {
+  const drive = getDriveClient()
+  const response = await drive.files.get(
+    { fileId, alt: 'media', supportsAllDrives: true },
+    { responseType: 'text' },
+  )
+  return response.data as unknown as string
+}
+
 export async function downloadDriveFile(courseId: string, fileId: string) {
   const drive = getDriveClient()
   const courseFolderId = getCourseFolderId(courseId)
