@@ -11,6 +11,7 @@ export interface Program {
   title: string
   description: string
   code: string
+  documentUrl?: string // Added to easily link directly to your shared Google Doc/PDF
 }
 
 export interface Question {
@@ -111,38 +112,12 @@ const courses: Course[] = [
     ],
     programs: [
       {
-        id: 'oops-program-1',
-        title: 'Student Class',
-        description: 'Create a class with a constructor and a method to display student details.',
-        code: `class Student {
-  constructor(name, rollNumber) {
-    this.name = name
-    this.rollNumber = rollNumber
-  }
-
-  display() {
-    return \`${'${this.rollNumber}'} - ${'${this.name}'}\`
-  }
-}`,
-      },
-      {
-        id: 'oops-program-2',
-        title: 'Shape Polymorphism',
-        description: 'Override a common area method in different shape classes.',
-        code: `class Shape {
-  area() { return 0 }
-}
-
-class Rectangle extends Shape {
-  constructor(width, height) {
-    super()
-    this.width = width
-    this.height = height
-  }
-
-  area() { return this.width * this.height }
-}`,
-      },
+        id: 'oops-all-programs',
+        title: 'All Laboratory Programs',
+        description: 'Click below to open the complete set of verified OOPS lab code, program structures, and assignments.',
+        code: '// Click the button to view the full document repository.',
+        documentUrl: 'https://drive.google.com/file/d/1qT2m9-J1jIo4BPdAX6LgvpjgSl1H2m7v/view?usp=sharing'
+      }
     ],
     driveFolderId: '1wtRFFkZiA-i9lDpVHz6AmRJTkyO8M7JU',
     categories: [
@@ -263,22 +238,13 @@ class Rectangle extends Shape {
         id: 'dbms-program-1',
         title: 'Student Enrollment Query',
         description: 'Join students and enrollments to list each student with their registered course.',
-        code: `SELECT s.name, e.course_name
-FROM students AS s
-INNER JOIN enrollments AS e
-  ON s.id = e.student_id
-ORDER BY s.name;`,
+        code: `SELECT s.name, e.course_name\nFROM students AS s\nINNER JOIN enrollments AS e\n  ON s.id = e.student_id\nORDER BY s.name;`,
       },
       {
         id: 'dbms-program-2',
         title: 'Department Summary',
         description: 'Group employees by department and calculate average salaries.',
-        code: `SELECT department_id,
-       COUNT(*) AS employee_count,
-       AVG(salary) AS average_salary
-FROM employees
-GROUP BY department_id
-HAVING COUNT(*) > 1;`,
+        code: `SELECT department_id,\n       COUNT(*) AS employee_count,\n       AVG(salary) AS average_salary\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 1;`,
       },
     ],
     driveFolderId: 'REPLACE_WITH_DBMS_FOLDER_ID',
@@ -400,21 +366,13 @@ HAVING COUNT(*) > 1;`,
         id: 'lab-program-1',
         title: 'Create a Student Table',
         description: 'Create a table with primary-key, required-field, and score constraints.',
-        code: `CREATE TABLE students (
-  id INT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  score DECIMAL(5, 2) CHECK (score BETWEEN 0 AND 100)
-);`,
+        code: `CREATE TABLE students (\n  id INT PRIMARY KEY,\n  name VARCHAR(100) NOT NULL,\n  score DECIMAL(5, 2) CHECK (score BETWEEN 0 AND 100)\n);`,
       },
       {
         id: 'lab-program-2',
         title: 'Salary Audit Trigger',
         description: 'Record old and new salary values whenever an employee salary changes.',
-        code: `CREATE TRIGGER log_salary_update
-AFTER UPDATE OF salary ON employees
-FOR EACH ROW
-INSERT INTO salary_audit(employee_id, old_salary, new_salary)
-VALUES (OLD.id, OLD.salary, NEW.salary);`,
+        code: `CREATE TRIGGER log_salary_update\nAFTER UPDATE OF salary ON employees\nFOR EACH ROW\nINSERT INTO salary_audit(employee_id, old_salary, new_salary)\nVALUES (OLD.id, OLD.salary, NEW.salary);`,
       },
     ],
     driveFolderId: 'REPLACE_WITH_DBMS_LAB_FOLDER_ID',
