@@ -230,9 +230,6 @@ function CourseDetailPage() {
           <div className="flex flex-col gap-4">
             <div>
               <h2 className="text-xl font-bold text-slate-900">Practice Programs</h2>
-              <p className="mt-1 text-sm leading-relaxed text-slate-500">
-                Starter examples for practice. More programs can be added here later.
-              </p>
             </div>
             {course.lessons
               .filter((lesson) => lesson.programsFileId)
@@ -243,24 +240,6 @@ function CourseDetailPage() {
                   title={lesson.title + ' — Programs'}
                 />
               ))}
-            {course.programs.map((program) => (
-              <article
-                key={program.id}
-                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-              >
-                <div className="p-5">
-                  <h3 className="font-bold text-slate-900">{program.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-600">
-                    {program.description}
-                  </p>
-                </div>
-                <div className="border-t border-slate-200 bg-slate-900 p-4">
-                  <pre className="overflow-x-auto text-sm leading-relaxed text-slate-100">
-                    <code>{program.code}</code>
-                  </pre>
-                </div>
-              </article>
-            ))}
           </div>
         )}
 

@@ -61,7 +61,7 @@ const courses: Course[] = [
           'Constructors and object initialization',
           'Real-world object modeling',
         ],
-        notesUrl: 'https://drive.google.com/uc?export=download&id=1hRWveQOVDkx0kqh5l0rbHbmsPRkDDIcK',
+        notesUrl: 'https://drive.google.com/file/d/1hRWveQOVDkx0kqh5l0rbHbmsPRkDDIcK/view?usp=drive_link',
         programsFileId: '1qT2m9-J1jIo4BPdAX6LgvpjgSl1H2m7v',
       },
       {
